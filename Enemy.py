@@ -1,6 +1,7 @@
 import pygame
 import random
 import math
+from Spider import MeleeAttack
 from GlobalVar import GlobalVariables as GV
 
 class UndergroundFrog:
@@ -11,6 +12,7 @@ class UndergroundFrog:
     in_web = None
     orgn_image = None
     image = None
+    dir = "Top"
     prevX = None
     prevY = None
 
@@ -34,15 +36,19 @@ class UndergroundFrog:
         if pif > 1.5 and self.in_web == False:
             if spider.objrect.x >= self.objrect.x and random.randint(0, 10) > 6:
                 self.image = pygame.transform.rotate(self.orgn_image, 270)
+                self.dir = "Right"
                 self.objrect.x += GV.scale
             elif spider.objrect.y > self.objrect.y:
                 self.image = pygame.transform.rotate(self.orgn_image, 180)
+                self.dir = "Bottom"
                 self.objrect.y += GV.scale
             if spider.objrect.x <= self.objrect.x and random.randint(0, 10) > 4:
                 self.image = pygame.transform.rotate(self.orgn_image, 90)
+                self.dir = "Left"
                 self.objrect.x -= GV.scale
             elif spider.objrect.y < self.objrect.y:
                 self.image = pygame.transform.rotate(self.orgn_image, 0)
+                self.dir = "Top"
                 self.objrect.y -= GV.scale
 
         self.collide_wall(walls)
@@ -65,9 +71,24 @@ class UndergroundFrog:
                 self.objrect.x = self.prevX
                 self.objrect.y = self.prevY
 
-    def attack():
+    def attack(self, spider, gVar):
         '''Атака тратит 1 ход'''
-        pass
+        if self.dir == "Top":
+            if self.objrect.y - GV.scale == spider.objrect.y and self.objrect.x == spider.objrect.x:
+                attack = MeleeAttack(self.objrect.x, self.objrect.y - GV.scale, self.damage, gVar.turn)
+                gVar.enemy_attacks.append(attack)
+        elif self.dir == "Left":
+            if self.objrect.y == spider.objrect.y and self.objrect.x - GV.scale == spider.objrect.x:
+                attack = MeleeAttack(self.objrect.x - GV.scale, self.objrect.y, self.damage, gVar.turn)
+                gVar.enemy_attacks.append(attack)
+        elif self.dir == "Bottom":
+            if self.objrect.y + GV.scale == spider.objrect.y and self.objrect.x == spider.objrect.x:
+                attack = MeleeAttack(self.objrect.x, self.objrect.y + GV.scale, self.damage, gVar.turn)
+                gVar.enemy_attacks.append(attack)
+        elif self.dir == "Right":
+            if self.objrect.y == spider.objrect.y and self.objrect.x + GV.scale == spider.objrect.x:
+                attack = MeleeAttack(self.objrect.x + GV.scale,self.objrect.y, self.damage, gVar.turn)
+                gVar.enemy_attacks.append(attack)
 
     def draw_current_hp(self, gVar):
         '''Отрисовка текущего и максимального здоровья над персонажем'''

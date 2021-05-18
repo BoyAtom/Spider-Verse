@@ -9,4 +9,6 @@ class GlobalVariables:
     floor = []
     webs = []
     enemys = []
+    enemy_attacks = []
+    spider_alive = True
     font = None

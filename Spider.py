@@ -75,6 +75,12 @@ class Shiraori:
                 self.objrect.x = self.prevX
                 self.objrect.y = self.prevY
 
+    def collide_attack(self, enemy_attacks):
+        for i in range (len(enemy_attacks)):
+            if enemy_attacks[i].collision(self):
+                self.health -= enemy_attacks[i].damage
+                enemy_attacks.pop(i)
+
     def add_health(self, amount):
         if self.health + amount <= self.max_health:
             self.health += amount
@@ -82,6 +88,12 @@ class Shiraori:
     def draw_current_hp(self, gVar):
         hp = str(self.health) +"/"+ str(self.max_health)
         return gVar.font.render(hp, True, (255, 255, 255))
+
+    def die(self, gVar):
+        self.orgn_image = None
+        self.image = None
+        gVar.spider_alive = False
+        pass
 
     def draw(self, gVar, screen):
         screen.blit(self.image, self.objrect)

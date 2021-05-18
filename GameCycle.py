@@ -44,6 +44,7 @@ def main():
             spider.move(gVar.walls)
         if gVar.turn % 60 == 0:
             for i in range (len(gVar.enemys)):
+                gVar.enemys[i].attack(spider, gVar)
                 gVar.enemys[i].move(spider, gVar.walls)
             gVar.turn = 0
 
@@ -57,16 +58,20 @@ def main():
         '''Отрисовка существ'''
         for i in range(len(gVar.enemys)):
             gVar.enemys[i].draw(gVar, screen)
-        spider.draw(gVar, screen)
+        if gVar.spider_alive != False: spider.draw(gVar, screen)
 
         '''Отрисовка атак'''
         cave.draw_attacks(spider, screen)
+        cave.draw_enemy_attacks(gVar, screen)
 
+        if gVar.spider_alive != False: spider.collide_attack(gVar.enemy_attacks)
         for i in range(len(gVar.enemys)):
             gVar.enemys[i].collide_attacks(spider)
 
-        cave.del_attacks(spider.attacks, gVar.turn)
+        cave.del_attacks(spider.attacks, gVar.enemy_attacks, gVar.turn)
         cave.kill_at_0hp(gVar)
+        if spider.health <= 0:
+            spider.die(gVar)
 
         gVar.turn += 1
         pygame.display.flip()

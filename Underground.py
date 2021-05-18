@@ -13,6 +13,8 @@ class Cave:
             for y in range(self.height):
                 if x == 0 or y == 0 or x == self.width-1 or y == self.height-1:
                     gvar.walls.append(Wall(x, y, "Tiles\Wall.png"))
+                elif x == 1 or y == 1 or x == self.width-2 or y == self.height-2:
+                    gvar.floor.append(Floor(x, y, "Tiles\Ground.png"))
                 elif random.randint(0, 10) <= 1:
                     gvar.walls.append(Wall(x, y, "Tiles\Wall.png"))
                 else:
@@ -33,6 +35,10 @@ class Cave:
         for i in range(len(spider.attacks)):
             spider.attacks[i].draw(screen)
 
+    def draw_enemy_attacks(self, gVar, screen):
+        for i in range(len(gVar.enemy_attacks)):
+            gVar.enemy_attacks[i].draw(screen)
+
     def kill_at_0hp(self, gvar):
         for j in range (len(gvar.enemys)):
             for i in range (len(gvar.enemys)):
@@ -41,10 +47,13 @@ class Cave:
                     gvar.enemys.append(UF(1, 1))
                     break
     
-    def del_attacks(self, attacks, cur_turn):
+    def del_attacks(self, attacks, enemy_attacks, cur_turn):
         for i in range(len(attacks)):
             if attacks[i].del_turn == cur_turn:
                 attacks.pop(i)
+        for i in range(len(enemy_attacks)):
+            if enemy_attacks[i].del_turn == cur_turn:
+                enemy_attacks.pop(i)
 
 
 class Wall:
