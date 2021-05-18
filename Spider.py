@@ -5,6 +5,7 @@ class Shiraori:
 
     health = 10
     max_health = 10
+    action = None
     damage = 1
     dir = "Top"
     attack_dir = "Top"

@@ -34,19 +34,19 @@ class UndergroundFrog:
 
         pif = math.sqrt((spider.objrect.x/GV.scale - self.objrect.x/GV.scale)**2 + (spider.objrect.y/GV.scale - self.objrect.y/GV.scale)**2)
         if pif > 1.5 and self.in_web == False:
-            if spider.objrect.x >= self.objrect.x and random.randint(0, 10) > 6:
+            if spider.objrect.x >= self.objrect.x and random.randint(0, 10) > 7:
                 self.image = pygame.transform.rotate(self.orgn_image, 270)
                 self.dir = "Right"
                 self.objrect.x += GV.scale
-            elif spider.objrect.y > self.objrect.y:
+            if spider.objrect.y > self.objrect.y and random.randint(0, 10) > 7:
                 self.image = pygame.transform.rotate(self.orgn_image, 180)
                 self.dir = "Bottom"
                 self.objrect.y += GV.scale
-            if spider.objrect.x <= self.objrect.x and random.randint(0, 10) > 4:
+            if spider.objrect.x <= self.objrect.x and random.randint(0, 10) > 7:
                 self.image = pygame.transform.rotate(self.orgn_image, 90)
                 self.dir = "Left"
                 self.objrect.x -= GV.scale
-            elif spider.objrect.y < self.objrect.y:
+            if spider.objrect.y < self.objrect.y and random.randint(0, 10) > 7:
                 self.image = pygame.transform.rotate(self.orgn_image, 0)
                 self.dir = "Top"
                 self.objrect.y -= GV.scale

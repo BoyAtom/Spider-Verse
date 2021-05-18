@@ -21,7 +21,7 @@ def main():
     dieText = youDied.render(("YOU DIED"), True, (255, 255, 255))
 
     run = True
-    screen = pygame.display.set_mode((cave.width * gVar.scale, cave.height * gVar.scale), pygame.DOUBLEBUF)
+    screen = pygame.display.set_mode((cave.width * gVar.scale, cave.height * gVar.scale), pygame.DOUBLEBUF | pygame.FULLSCREEN)
 
     cave.create_world(gVar)
 
@@ -42,16 +42,21 @@ def main():
                 if event.key == pygame.K_q:
                     spider.createWeb(gVar)
                 if event.key == pygame.K_e:
-                    spider.attack(gVar.turn)
+                    spider.action = "Attack"
+                if event.key == pygame.K_ESCAPE:
+                    run = False
 
         '''Движения существ'''
-        if gVar.turn % 20 == 0 and gVar.spider_alive != False:
+        if gVar.turn % 14 == 0 and gVar.spider_alive:
+            if spider.action == "Attack":
+                spider.attack(gVar.turn)
             spider.move(gVar.walls)
-        if gVar.turn % 40 == 0 and gVar.spider_alive != False:
+        if gVar.turn % 28 == 0 and gVar.spider_alive != False:
             for i in range (len(gVar.enemys)):
                 gVar.enemys[i].attack(spider, gVar)
                 gVar.enemys[i].move(spider, gVar.walls)
             gVar.turn = 0
+        if gVar.spider_alive: spider.action = None
 
         '''Очистка экрана'''
         screen.fill((0, 0, 0))
@@ -63,25 +68,25 @@ def main():
         '''Отрисовка существ'''
         for i in range(len(gVar.enemys)):
             gVar.enemys[i].draw(gVar, screen)
-        if gVar.spider_alive != False: spider.draw(gVar, screen)
+        if gVar.spider_alive: spider.draw(gVar, screen)
 
         '''Отрисовка атак'''
-        if gVar.spider_alive != False: cave.draw_attacks(spider, screen)
+        if gVar.spider_alive: cave.draw_attacks(spider, screen)
         cave.draw_enemy_attacks(gVar, screen)
 
-        if gVar.spider_alive != False: 
+        if gVar.spider_alive: 
             spider.collide_attack(gVar.enemy_attacks)
             for i in range(len(gVar.enemys)):
                 gVar.enemys[i].collide_attacks(spider)
 
-        if gVar.spider_alive != False: cave.del_attacks(spider.attacks, gVar.enemy_attacks, gVar.turn)
+        if gVar.spider_alive: cave.del_attacks(spider.attacks, gVar.enemy_attacks, gVar.turn)
         cave.kill_at_0hp(gVar)
         if spider != None and spider.health <= 0:
             spider.die(gVar)
             spider = None
 
         if gVar.spider_alive == False:
-            screen.blit(dieText, ((cave.width / 4) * gVar.scale, (cave.height / 4) * gVar.scale))
+            screen.blit(dieText, ((cave.width / 3) * gVar.scale, (cave.height / 4) * gVar.scale))
 
         gVar.turn += 1
         pygame.display.flip()

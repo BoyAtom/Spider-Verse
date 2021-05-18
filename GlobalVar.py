@@ -2,7 +2,7 @@ import pygame
 
 
 class GlobalVariables:
-    scale = 32
+    scale = 33
     day = 0
     turn = 0
     walls = []

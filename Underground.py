@@ -5,8 +5,8 @@ from GlobalVar import GlobalVariables as GV
 
 class Cave:
 
-    height = 20
-    width = 30
+    height = 23
+    width = 41
 
     def create_world(self, gvar):
         for x in range(self.width):
@@ -15,7 +15,7 @@ class Cave:
                     gvar.walls.append(Wall(x, y, "Tiles\Wall.png"))
                 elif x == 1 or y == 1 or x == self.width-2 or y == self.height-2:
                     gvar.floor.append(Floor(x, y, "Tiles\Ground.png"))
-                elif random.randint(0, 10) <= 1:
+                elif random.randint(0, 10) <= 2:
                     gvar.walls.append(Wall(x, y, "Tiles\Wall.png"))
                 else:
                     gvar.floor.append(Floor(x, y, "Tiles\Ground.png"))
