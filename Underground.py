@@ -6,7 +6,7 @@ from GlobalVar import GlobalVariables as GV
 class Cave:
 
     height = 20
-    width = 20
+    width = 30
 
     def create_world(self, gvar):
         for x in range(self.width):

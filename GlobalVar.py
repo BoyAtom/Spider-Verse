@@ -12,3 +12,4 @@ class GlobalVariables:
     enemy_attacks = []
     spider_alive = True
     font = None
+    FPS = 90
