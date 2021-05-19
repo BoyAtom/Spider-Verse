@@ -39,21 +39,26 @@ class Cave:
         for i in range(len(gVar.enemy_attacks)):
             gVar.enemy_attacks[i].draw(screen)
 
-    def kill_at_0hp(self, gvar):
+    def kill_at_0hp(self, gvar, iface):
         for j in range (len(gvar.enemys)):
             for i in range (len(gvar.enemys)):
                 if gvar.enemys[i].health <= 0:
+                    iface.change_exp(gvar.enemys[i].xp_treasure)
                     gvar.enemys.pop(i)
                     gvar.enemys.append(UF(1, 1))
                     break
     
     def del_attacks(self, attacks, enemy_attacks, cur_turn):
-        for i in range(len(attacks)):
-            if attacks[i].del_turn == cur_turn:
-                attacks.pop(i)
-        for i in range(len(enemy_attacks)):
-            if enemy_attacks[i].del_turn == cur_turn:
-                enemy_attacks.pop(i)
+        for j in range(len(attacks)):
+            for i in range(len(attacks)):
+                if attacks[i].del_turn == cur_turn:
+                    attacks.pop(i)
+                    break
+        for j in range(len(enemy_attacks)):
+            for i in range(len(enemy_attacks)):
+                if enemy_attacks[i].del_turn == cur_turn:
+                    enemy_attacks.pop(i)
+                    break
 
 
 class Wall:

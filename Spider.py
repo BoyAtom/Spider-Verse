@@ -9,7 +9,8 @@ class Shiraori:
     damage = 1
     dir = "Top"
     attack_dir = "Top"
-    webLimit = 2
+    max_web = 2
+    xp_limit = 10
     webs = []
     attacks = []
     orgn_image = None
@@ -51,7 +52,7 @@ class Shiraori:
 
     def createWeb(self, gVar):
         '''Создание паутины тратит 2 хода'''
-        if self.webLimit != len(self.webs):
+        if self.max_web != len(self.webs):
             self.webs.append(Web(self.objrect.x / gVar.scale, self.objrect.y / gVar.scale))
             gVar.webs = self.webs
 
@@ -65,6 +66,7 @@ class Shiraori:
             self.attacks.append(MeleeAttack(self.objrect.x, self.objrect.y + GV.scale, self.damage, cur_turn))
         elif self.attack_dir == "Right":
             self.attacks.append(MeleeAttack(self.objrect.x + GV.scale, self.objrect.y, self.damage, cur_turn))
+        self.action = None
 
     def spitVenom(self):
         '''Плевок тратит ход'''
@@ -89,6 +91,13 @@ class Shiraori:
     def draw_current_hp(self, gVar):
         hp = str(self.health) +"/"+ str(self.max_health)
         return gVar.font.render(hp, True, (255, 255, 255))
+
+    def level_up(self):
+        self.max_health += 2
+        self.max_web += 1
+        if self.xp_limit % 30 == 0:
+            self.damage += 1
+        self.xp_limit += 5
 
     def die(self, gVar):
         self.orgn_image = None
@@ -134,8 +143,8 @@ class MeleeAttack:
         self.objrect.x = x
         self.objrect.y = y
         self.damage = damage
-        if cur_time + 5 >= 60:
-            self.del_turn = cur_time - 55
+        if cur_time + 5 > 30:
+            self.del_turn = cur_time - 25
         else: 
             self.del_turn = cur_time + 5
 

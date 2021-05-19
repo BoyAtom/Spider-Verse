@@ -9,6 +9,7 @@ class UndergroundFrog:
     health = 5
     max_health = 5
     damage = 1
+    xp_treasure = 5
     in_web = None
     orgn_image = None
     image = None

@@ -2,7 +2,7 @@ import pygame
 
 
 class GlobalVariables:
-    scale = 33
+    scale = 31
     day = 0
     turn = 0
     walls = []
@@ -12,4 +12,4 @@ class GlobalVariables:
     enemy_attacks = []
     spider_alive = True
     font = None
-    FPS = 90
+    FPS = 60
