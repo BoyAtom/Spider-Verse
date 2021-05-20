@@ -76,19 +76,19 @@ class UndergroundFrog:
         '''Атака тратит 1 ход'''
         if self.dir == "Top":
             if self.objrect.y - GV.scale == spider.objrect.y and self.objrect.x == spider.objrect.x:
-                attack = MeleeAttack(self.objrect.x, self.objrect.y - GV.scale, self.damage, gVar.turn)
+                attack = MeleeAttack(self.objrect.x, self.objrect.y - GV.scale, self.damage, "Tiles\AttackFrog.png", gVar.turn, "Top")
                 gVar.enemy_attacks.append(attack)
         elif self.dir == "Left":
             if self.objrect.y == spider.objrect.y and self.objrect.x - GV.scale == spider.objrect.x:
-                attack = MeleeAttack(self.objrect.x - GV.scale, self.objrect.y, self.damage, gVar.turn)
+                attack = MeleeAttack(self.objrect.x - GV.scale, self.objrect.y, self.damage, "Tiles\AttackFrog.png", gVar.turn, "Left")
                 gVar.enemy_attacks.append(attack)
         elif self.dir == "Bottom":
             if self.objrect.y + GV.scale == spider.objrect.y and self.objrect.x == spider.objrect.x:
-                attack = MeleeAttack(self.objrect.x, self.objrect.y + GV.scale, self.damage, gVar.turn)
+                attack = MeleeAttack(self.objrect.x, self.objrect.y + GV.scale, self.damage, "Tiles\AttackFrog.png", gVar.turn, "Bottom")
                 gVar.enemy_attacks.append(attack)
         elif self.dir == "Right":
             if self.objrect.y == spider.objrect.y and self.objrect.x + GV.scale == spider.objrect.x:
-                attack = MeleeAttack(self.objrect.x + GV.scale,self.objrect.y, self.damage, gVar.turn)
+                attack = MeleeAttack(self.objrect.x + GV.scale, self.objrect.y, self.damage, "Tiles\AttackFrog.png", gVar.turn, "Right")
                 gVar.enemy_attacks.append(attack)
 
     def draw_current_hp(self, gVar):

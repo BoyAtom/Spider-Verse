@@ -59,13 +59,13 @@ class Shiraori:
     def attack(self, cur_turn):
         '''Атака тратит ход'''
         if self.attack_dir == "Top":
-            self.attacks.append(MeleeAttack(self.objrect.x, self.objrect.y - GV.scale, self.damage, cur_turn))
+            self.attacks.append(MeleeAttack(self.objrect.x, self.objrect.y - GV.scale, self.damage, "Tiles\AttackSpider.png", cur_turn, "Top"))
         elif self.attack_dir == "Left":
-            self.attacks.append(MeleeAttack(self.objrect.x - GV.scale, self.objrect.y, self.damage, cur_turn))
+            self.attacks.append(MeleeAttack(self.objrect.x - GV.scale, self.objrect.y, self.damage, "Tiles\AttackSpider.png", cur_turn, "Left"))
         elif self.attack_dir == "Bottom":
-            self.attacks.append(MeleeAttack(self.objrect.x, self.objrect.y + GV.scale, self.damage, cur_turn))
+            self.attacks.append(MeleeAttack(self.objrect.x, self.objrect.y + GV.scale, self.damage, "Tiles\AttackSpider.png", cur_turn, "Bottom"))
         elif self.attack_dir == "Right":
-            self.attacks.append(MeleeAttack(self.objrect.x + GV.scale, self.objrect.y, self.damage, cur_turn))
+            self.attacks.append(MeleeAttack(self.objrect.x + GV.scale, self.objrect.y, self.damage, "Tiles\AttackSpider.png", cur_turn, "Right"))
         self.action = None
 
     def spitVenom(self):
@@ -135,10 +135,16 @@ class MeleeAttack:
     damage = None
     del_turn = None
 
-    def __init__(self, x, y, damage, cur_time):
+    def __init__(self, x, y, damage, image, cur_time, dir):
         '''Значение scale должно быть кратно 8!'''
-        self.img = pygame.image.load("Tiles\AttackSpider.png")
+        self.img = pygame.image.load(image)
         self.img = pygame.transform.scale(self.img, (GV.scale, GV.scale))
+        if dir == "Left":
+            self.img = pygame.transform.rotate(self.img, 90)
+        elif dir == "Bottom":
+            self.img = pygame.transform.rotate(self.img, 180)
+        elif dir == "Right":
+            self.img = pygame.transform.rotate(self.img, 270)
         self.objrect = self.img.get_rect()
         self.objrect.x = x
         self.objrect.y = y
