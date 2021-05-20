@@ -12,10 +12,13 @@ class Cave:
         for x in range(self.width):
             for y in range(self.height):
                 if x == 0 or y == 0 or x == self.width-1 or y == self.height-1:
-                    gvar.walls.append(Wall(x, y, "Tiles\Wall.png"))
+                    if (x == 20) or (y == 11):
+                        gvar.floor.append(Floor(x, y, "Tiles\Ground.png"))
+                    else: 
+                        gvar.walls.append(Wall(x, y, "Tiles\Wall.png"))
                 elif x == 1 or y == 1 or x == self.width-2 or y == self.height-2:
                     gvar.floor.append(Floor(x, y, "Tiles\Ground.png"))
-                elif random.randint(0, 10) <= 2:
+                elif random.randint(0, 10) <= 1:
                     gvar.walls.append(Wall(x, y, "Tiles\Wall.png"))
                 else:
                     gvar.floor.append(Floor(x, y, "Tiles\Ground.png"))
@@ -45,7 +48,6 @@ class Cave:
                 if gvar.enemys[i].health <= 0:
                     iface.change_exp(gvar.enemys[i].xp_treasure)
                     gvar.enemys.pop(i)
-                    gvar.enemys.append(UF(1, 1))
                     break
     
     def del_attacks(self, attacks, enemy_attacks, cur_turn):

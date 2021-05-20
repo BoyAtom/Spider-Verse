@@ -143,8 +143,8 @@ class MeleeAttack:
         self.objrect.x = x
         self.objrect.y = y
         self.damage = damage
-        if cur_time + 5 > 30:
-            self.del_turn = cur_time - 25
+        if cur_time + 5 > 150:
+            self.del_turn = cur_time - 145
         else: 
             self.del_turn = cur_time + 5
 

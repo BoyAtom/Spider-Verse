@@ -26,3 +26,9 @@ class Interface:
 
     def draw_level(self, screen):
         screen.blit(self.font.render(("Уровень " + str(self.level)), True, (255, 255, 255)), (0, GV.scale / 2))
+
+    def change_day(self, amount):
+        self.day += amount
+
+    def draw_day(self, screen):
+        screen.blit(self.font.render(("День " + str(self.day)), True, (255, 255, 255)), (0, GV.scale))
