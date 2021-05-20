@@ -37,6 +37,8 @@ class Cave:
     def draw_attacks(self, spider, screen):
         for i in range(len(spider.attacks)):
             spider.attacks[i].draw(screen)
+        for i in range(len(spider.range_attacks)):
+            spider.range_attacks[i].draw(screen)
 
     def draw_enemy_attacks(self, gVar, screen):
         for i in range(len(gVar.enemy_attacks)):
@@ -50,7 +52,7 @@ class Cave:
                     gvar.enemys.pop(i)
                     break
     
-    def del_attacks(self, attacks, enemy_attacks, cur_turn):
+    def del_attacks(self, attacks, enemy_attacks, range_attacks, cur_turn):
         for j in range(len(attacks)):
             for i in range(len(attacks)):
                 if attacks[i].del_turn == cur_turn:
@@ -61,6 +63,12 @@ class Cave:
                 if enemy_attacks[i].del_turn == cur_turn:
                     enemy_attacks.pop(i)
                     break
+        for j in range(len(range_attacks)):
+            for i in range(len(range_attacks)):
+                if range_attacks[i].dist == 4:
+                    range_attacks.pop(i)
+                    break
+    
 
 
 class Wall:
@@ -74,6 +82,12 @@ class Wall:
 
     def collision(self, object):
         return self.objrect.colliderect(object.objrect)
+
+    def collide_bullet(self, spider):
+        for j in range(len(spider.range_attacks)):
+            for i in range(len(spider.range_attacks)):
+                if spider.range_attacks[i].collision(self):
+                    spider.range_attacks.pop(i)
 
     def draw(self, screen):
         screen.blit(self.img, self.objrect)

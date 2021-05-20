@@ -65,6 +65,10 @@ class UndergroundFrog:
                 self.health -= spider.attacks[i].damage
                 spider.attacks.pop(i)
                 spider.add_health(1)
+        for i in range(len(spider.range_attacks)):
+            if spider.range_attacks[i].collision(self):
+                self.health -= spider.range_attacks[i].damage
+                spider.range_attacks.pop(i)
 
     def collide_wall(self, walls):
         for i in range (len(walls)):

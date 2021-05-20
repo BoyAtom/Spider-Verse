@@ -13,6 +13,7 @@ class Shiraori:
     xp_limit = 10
     webs = []
     attacks = []
+    range_attacks = []
     orgn_image = None
     image = None
     objrect = None
@@ -70,6 +71,15 @@ class Shiraori:
 
     def spitVenom(self):
         '''Плевок тратит ход'''
+        if self.attack_dir == "Top":
+            self.range_attacks.append(RangeAttack(self.objrect.x, self.objrect.y - GV.scale, self.damage, "Top"))
+        elif self.attack_dir == "Left":
+            self.range_attacks.append(RangeAttack(self.objrect.x - GV.scale, self.objrect.y, self.damage, "Left"))
+        elif self.attack_dir == "Bottom":
+            self.range_attacks.append(RangeAttack(self.objrect.x, self.objrect.y + GV.scale, self.damage, "Bottom"))
+        elif self.attack_dir == "Right":
+            self.range_attacks.append(RangeAttack(self.objrect.x + GV.scale, self.objrect.y, self.damage, "Right"))
+        self.action = None
         pass
 
     def collide_wall(self, walls):
@@ -153,6 +163,45 @@ class MeleeAttack:
             self.del_turn = cur_time - 145
         else: 
             self.del_turn = cur_time + 5
+
+    def collision(self, object):
+        return self.objrect.colliderect(object.objrect)
+
+    def draw(self, screen):
+        screen.blit(self.img, self.objrect)
+
+class RangeAttack:
+    
+    img = None
+    damage = None
+    dist = 0
+    dir = None
+
+    def __init__(self, x, y, damage, dir):
+        self.img = pygame.image.load("Tiles\RangeAttackSpider.png")
+        self.img = pygame.transform.scale(self.img, (GV.scale, GV.scale))
+        if dir == "Left":
+            self.img = pygame.transform.rotate(self.img, 90)
+        elif dir == "Bottom":
+            self.img = pygame.transform.rotate(self.img, 180)
+        elif dir == "Right":
+            self.img = pygame.transform.rotate(self.img, 270)
+        self.objrect = self.img.get_rect()
+        self.objrect.x = x
+        self.objrect.y = y
+        self.dir = dir
+        self.damage = damage
+
+    def move(self):
+        self.dist += 1
+        if self.dir == "Top":
+            self.objrect.y -= GV.scale
+        elif self.dir == "Left":
+            self.objrect.x -= GV.scale
+        elif self.dir == "Bottom":
+            self.objrect.y += GV.scale
+        elif self.dir == "Right":
+            self.objrect.x += GV.scale
 
     def collision(self, object):
         return self.objrect.colliderect(object.objrect)

@@ -103,6 +103,8 @@ def main():
                     spider.createWeb(gVar)
                 if event.key == pygame.K_e:
                     spider.action = "Attack"
+                if event.key == pygame.K_r:
+                    spider.spitVenom()
                 if event.key == pygame.K_ESCAPE:
                     run = False
 
@@ -111,6 +113,9 @@ def main():
             spider.move(gVar.walls)
         if spider.action == "Attack" and gVar.turn % 2 == 0 and gVar.spider_alive:
             spider.attack(gVar.turn)
+        if gVar.turn % 5 == 0 and len(spider.range_attacks) != 0:
+            for i in range(len(spider.range_attacks)):
+                spider.range_attacks[i].move()
         if gVar.turn % 30 == 0 and gVar.spider_alive:
             for i in range(len(gVar.enemys)):
                 gVar.enemys[i].attack(spider, gVar)
@@ -140,6 +145,8 @@ def main():
         '''Отрисовка атак'''
         if gVar.spider_alive: cave.draw_attacks(spider, screen)
         cave.draw_enemy_attacks(gVar, screen)
+        for i in range(len(gVar.walls)):
+            gVar.walls[i].collide_bullet(spider)
         if gVar.spider_alive:
             spider.collide_attack(gVar.enemy_attacks)
             for i in range(len(gVar.enemys)):
@@ -153,7 +160,7 @@ def main():
 
         '''СМЕРТИ!!!'''
         cave.kill_at_0hp(gVar, interface)
-        if gVar.spider_alive: cave.del_attacks(spider.attacks, gVar.enemy_attacks, gVar.turn)
+        if gVar.spider_alive: cave.del_attacks(spider.attacks, gVar.enemy_attacks, spider.range_attacks, gVar.turn)
         if spider != None and spider.health <= 0:
             spider.die(gVar)
             spider = None
