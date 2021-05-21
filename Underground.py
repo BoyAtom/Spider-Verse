@@ -13,15 +13,15 @@ class Cave:
             for y in range(self.height):
                 if x == 0 or y == 0 or x == self.width-1 or y == self.height-1:
                     if (x == 20) or (y == 11):
-                        gvar.floor.append(Floor(x, y, "Tiles\Ground.png"))
+                        gvar.floor.append(Floor(x, y, GV.ground_tiles[random.randint(0, len(GV.ground_tiles) - 1)]))
                     else: 
-                        gvar.walls.append(Wall(x, y, "Tiles\Wall.png"))
+                        gvar.walls.append(Wall(x, y, GV.wall_tiles[random.randint(0, len(GV.wall_tiles) - 1)]))
                 elif x == 1 or y == 1 or x == self.width-2 or y == self.height-2:
-                    gvar.floor.append(Floor(x, y, "Tiles\Ground.png"))
+                    gvar.floor.append(Floor(x, y, GV.ground_tiles[random.randint(0, len(GV.ground_tiles) - 1)]))
                 elif random.randint(0, 10) <= 1:
-                    gvar.walls.append(Wall(x, y, "Tiles\Wall.png"))
+                    gvar.walls.append(Wall(x, y, GV.wall_tiles[random.randint(0, len(GV.wall_tiles) - 1)]))
                 else:
-                    gvar.floor.append(Floor(x, y, "Tiles\Ground.png"))
+                    gvar.floor.append(Floor(x, y, GV.ground_tiles[random.randint(0, len(GV.ground_tiles) - 1)]))
 
     def draw_world(self, gvar, screen):
         for i in range(len(gvar.walls)):
