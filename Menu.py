@@ -14,10 +14,11 @@ clock = pygame.time.Clock()
 cave = Cave()
 spider = Shiraori(10, 10)
 gVar = GlobalVariables()
-gVar.font = pygame.font.Font('Font\PixelFont.ttf', 6)
+gVar.font = pygame.font.Font('Font\oneFont.ttf', 7)
 win = pygame.display.set_mode((cave.width * gVar.scale, cave.height * gVar.scale),
                                      pygame.DOUBLEBUF | pygame.FULLSCREEN)
-win.fill((0, 0, 30))
+background_image = pygame.image.load('Images\BackGr.jpg')
+HelpG = pygame.image.load('Images\help.jpg')
 
 class button():
     def __init__(self, color, x, y, width, height, text=''):
@@ -33,11 +34,11 @@ class button():
         if outline:
             pygame.draw.rect(win, outline, (self.x - 2, self.y - 2, self.width + 4, self.height + 4), 0)
 
-        pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height), 0)
+        pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height), 2)
 
         if self.text != '':
-            font = pygame.font.SysFont('comicsans', 60)
-            text = font.render(self.text, 1, (0, 0, 0))
+            font = pygame.font.Font('Font\oneFont.ttf', 55) # Размер шрифта
+            text = font.render(self.text, 1, (255, 255, 255)) # Цвет букв в главном меню
             win.blit(text, (self.x + (self.width / 2 - text.get_width() / 2), self.y + (self.height / 2 - text.get_height() / 2)))
 
     def isOver(self, pos):
@@ -50,10 +51,12 @@ class button():
 
 
 def redrawMenuWindow():
-    win.fill((0, 180, 210))
+    #win.fill((0, 180, 210)) - одноцветный фон
+    win.blit(background_image,(5, 5))
     greenButton.draw(win, (0, 0, 0))
     redButton.draw(win, (0, 0, 0))
-    listButton.draw(win,(0, 0, 0))
+    listButton.draw(win, (0, 0, 0))
+    helpButton.draw(win, (0, 0, 0))
 
 #ИГРА НАЧИНАЕТСЯ ТУТ
 
@@ -182,8 +185,9 @@ def main():
 
 
 greenButton = button((0, 255, 0), cave.width * gVar.scale//3,cave.height * gVar.scale//3, 400, 100, "Начать игру")
-redButton = button((255, 0, 0), cave.width * gVar.scale//3,cave.height * gVar.scale//1.5, 400, 100, "Выйти")
-listButton = button((255, 0, 0), cave.width * gVar.scale//3,cave.height * gVar.scale//2, 400, 100, "Рекорды")
+redButton = button((255, 0, 0), cave.width * gVar.scale//3,cave.height * gVar.scale//1.2, 400, 100, "Выйти")
+listButton = button((255, 0, 0), cave.width * gVar.scale//3,cave.height * gVar.scale//1.5, 400, 100, "Читы")
+helpButton = button((0, 0, 0), cave.width * gVar.scale//3,cave.height * gVar.scale//2, 400, 100, "Инструкция и управление")
 
 game_state = "menu"
 run = True
@@ -215,28 +219,43 @@ while run:
                 if listButton.isOver(pos):
                     print("clicked the 3button")
                     while game_state == 'menu':
-                        win.blit(pygame.image.load('Ham.jpg').convert(), (cave.width * gVar.scale//4,cave.height * gVar.scale//50))
+                        win.blit(pygame.image.load('Images\Ham.jpg').convert(), (cave.width * gVar.scale//4,cave.height * gVar.scale//50))
                         pygame.display.flip()
                         for event in pygame.event.get():
                             if event.type == pygame.KEYDOWN:
                                 if event.key == pygame.K_ESCAPE:
                                     pygame.quit()
                                     quit()
+                if helpButton.isOver(pos):
+                    print("clicked the 4button")
+                    game_state = 'help'
+                    while game_state == 'help':
+                        win.blit(HelpG,(5, 5))
+                        pygame.display.update()
+                        for event in pygame.event.get():
+                            if event.type == pygame.KEYDOWN:
+                                if event.key == pygame.K_ESCAPE:
+                                    game_state = 'menu'
+                                    pygame.display.update()
+
 
 
 
 
             if event.type == pygame.MOUSEMOTION:
                 if greenButton.isOver(pos):
-                    greenButton.color = (105, 105, 105)
+                    greenButton.color = (0, 0, 0)
                 else:
-                    greenButton.color = (0, 255, 0)
+                    greenButton.color = (255, 255, 255)
                 if redButton.isOver(pos):
-                    redButton.color = (105, 105, 105)
+                    redButton.color = (0, 0, 0)
                 else:
-                    redButton.color = (255, 0, 0)
+                    redButton.color = (255, 255, 255)
                 if listButton.isOver(pos):
-                    listButton.color = (105, 105, 105)
+                    listButton.color = (0, 0, 0)
                 else:
-                    listButton.color = (255, 255, 0)
-
+                    listButton.color = (255, 255, 255)
+                if helpButton.isOver(pos):
+                    helpButton.color = (0, 0, 0)
+                else:
+                    helpButton.color = (255, 255, 255)
