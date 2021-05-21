@@ -114,12 +114,12 @@ def main():
         '''Движения существ'''
         if gVar.turn % 15 == 0 and gVar.spider_alive:
             spider.move(gVar.walls)
-        if spider.action == "Attack" and gVar.turn % 2 == 0 and gVar.spider_alive:
+        if gVar.spider_alive and spider.action == "Attack" and gVar.turn % 2 == 0:
             spider.attack(gVar.turn)
-        if gVar.turn % 5 == 0 and len(spider.range_attacks) != 0:
+        if gVar.spider_alive and gVar.turn % 5 == 0 and len(spider.range_attacks) != 0:
             for i in range(len(spider.range_attacks)):
                 spider.range_attacks[i].move()
-        if gVar.turn % 30 == 0 and gVar.spider_alive:
+        if gVar.spider_alive and gVar.turn % 30 == 0:
             for i in range(len(gVar.enemys)):
                 gVar.enemys[i].attack(spider, gVar)
                 gVar.enemys[i].move(spider, gVar.walls)
@@ -149,14 +149,14 @@ def main():
         if gVar.spider_alive: cave.draw_attacks(spider, screen)
         cave.draw_enemy_attacks(gVar, screen)
         for i in range(len(gVar.walls)):
-            gVar.walls[i].collide_bullet(spider)
+            if gVar.spider_alive: gVar.walls[i].collide_bullet(spider)
         if gVar.spider_alive:
             spider.collide_attack(gVar.enemy_attacks)
             for i in range(len(gVar.enemys)):
                 gVar.enemys[i].collide_attacks(spider)
 
         '''События'''
-        if spider.xp_limit <= interface.experience:
+        if gVar.spider_alive and spider.xp_limit <= interface.experience:
             spider.level_up()
             interface.change_level(1)
             interface.experience = 0

@@ -55,7 +55,7 @@ class Cave:
     def del_attacks(self, attacks, enemy_attacks, range_attacks, cur_turn):
         for j in range(len(attacks)):
             for i in range(len(attacks)):
-                if attacks[i].del_turn == cur_turn:
+                if attacks[i].del_turn == cur_turn or len(attacks) >= 1:
                     attacks.pop(i)
                     break
         for j in range(len(enemy_attacks)):
@@ -88,6 +88,7 @@ class Wall:
             for i in range(len(spider.range_attacks)):
                 if spider.range_attacks[i].collision(self):
                     spider.range_attacks.pop(i)
+                    break
 
     def draw(self, screen):
         screen.blit(self.img, self.objrect)

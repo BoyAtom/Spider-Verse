@@ -89,10 +89,12 @@ class Shiraori:
                 self.objrect.y = self.prevY
 
     def collide_attack(self, enemy_attacks):
-        for i in range (len(enemy_attacks)):
-            if enemy_attacks[i].collision(self):
-                self.health -= enemy_attacks[i].damage
-                enemy_attacks.pop(i)
+        for j in range (len(enemy_attacks)):
+            for i in range (len(enemy_attacks)):
+                if enemy_attacks[i].collision(self):
+                    self.health -= enemy_attacks[i].damage
+                    enemy_attacks.pop(i)
+                    break
 
     def add_health(self, amount):
         if self.health + amount <= self.max_health:

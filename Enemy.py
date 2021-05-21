@@ -60,15 +60,19 @@ class UndergroundFrog:
                 self.in_web = True
 
     def collide_attacks(self, spider):
-        for i in range(len(spider.attacks)):
-            if spider.attacks[i].collision(self):
-                self.health -= spider.attacks[i].damage
-                spider.attacks.pop(i)
-                spider.add_health(1)
-        for i in range(len(spider.range_attacks)):
-            if spider.range_attacks[i].collision(self):
-                self.health -= spider.range_attacks[i].damage
-                spider.range_attacks.pop(i)
+        for j in range(len(spider.attacks)):
+            for i in range(len(spider.attacks)):
+                if spider.attacks[i].collision(self):
+                    self.health -= spider.attacks[i].damage
+                    spider.attacks.pop(i)
+                    spider.add_health(1)
+                    break
+        for j in range(len(spider.range_attacks)):
+            for i in range(len(spider.range_attacks)):
+                if spider.range_attacks[i].collision(self):
+                    self.health -= spider.range_attacks[i].damage
+                    spider.range_attacks.pop(i)
+                    break
 
     def collide_wall(self, walls):
         for i in range (len(walls)):
