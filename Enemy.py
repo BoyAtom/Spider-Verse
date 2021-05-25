@@ -17,13 +17,16 @@ class UndergroundFrog:
     prevX = None
     prevY = None
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, dmg, hp):
         self.orgn_image = pygame.image.load(r"Tiles\UndergroundFrog.png")
         self.orgn_image = pygame.transform.scale(self.orgn_image, (GV.scale, GV.scale))
         self.image = self.orgn_image
         self.objrect = self.image.get_rect()
         self.objrect.x = x * GV.scale
         self.objrect.y = y * GV.scale
+        self.max_health = hp
+        self.health = self.max_health
+        self.damage = dmg
         self.in_web = False
 
     def move(self, spider, walls):

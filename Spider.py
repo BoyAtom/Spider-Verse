@@ -106,7 +106,7 @@ class Shiraori:
 
     def level_up(self):
         self.max_health += 2
-        self.max_web += 1
+        self.max_web += 2
         if self.xp_limit % 30 == 0:
             self.damage += 1
         self.xp_limit += 5

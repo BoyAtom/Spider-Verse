@@ -19,6 +19,8 @@ class GlobalVariables:
     webs = []
     enemys = []
     enemy_attacks = []
+    enemy_dmg = 1
+    enemy_hp = 5
     spider_alive = True
     font = None
     FPS = 60

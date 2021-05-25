@@ -11,4 +11,4 @@ class Spawner:
         self.posY = y
 
     def spawn_enemy(self, gVar):
-        gVar.enemys.append(UF(self.posX, self.posY))
+        gVar.enemys.append(UF(self.posX, self.posY, gVar.enemy_dmg, gVar.enemy_hp))

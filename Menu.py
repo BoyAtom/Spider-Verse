@@ -81,7 +81,7 @@ def main():
     ]
 
     youDied = pygame.font.Font('Font\PixelFont.ttf', 50)
-    dieText = youDied.render(("YOU DIED"), True, (255, 255, 255))
+    dieText = youDied.render(("YOU DIED"), True, (255, 0, 0))
 
     run = True
     screen = pygame.display.set_mode((cave.width * gVar.scale, cave.height * gVar.scale), pygame.FULLSCREEN)
@@ -94,22 +94,25 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_w:
-                    spider.dir = "Top"
-                if event.key == pygame.K_s:
-                    spider.dir = "Bottom"
-                if event.key == pygame.K_a:
-                    spider.dir = "Left"
-                if event.key == pygame.K_d:
-                    spider.dir = "Right"
-                if event.key == pygame.K_q:
-                    spider.createWeb(gVar)
-                if event.key == pygame.K_e:
-                    spider.action = "Attack"
-                if event.key == pygame.K_r:
-                    spider.spitVenom()
                 if event.key == pygame.K_ESCAPE:
                     run = False
+                if event.key == pygame.K_z:
+                    spider.action = "Attack"
+                if event.key == pygame.K_x:
+                    spider.spitVenom()
+                if event.key == pygame.K_c:
+                    spider.createWeb(gVar)
+
+        '''Обработка зажатий клавиш'''
+        key = pygame.key.get_pressed()
+        if key[pygame.K_UP]:
+            spider.dir = "Top"
+        if key[pygame.K_DOWN]:
+            spider.dir = "Bottom"
+        if key[pygame.K_LEFT]:
+            spider.dir = "Left"
+        if key[pygame.K_RIGHT]:
+            spider.dir = "Right"
 
         '''Движения существ'''
         if gVar.turn % 15 == 0 and gVar.spider_alive:
@@ -131,6 +134,8 @@ def main():
             spawned_enemys = 0
             if enemy_limit != 15: enemy_limit += 1
             interface.change_day(1)
+            if interface.day == 4: gVar.enemy_dmg += 1
+            gVar.enemy_hp += 1
         if gVar.spider_alive: spider.action = None
 
         '''Очистка экрана'''
