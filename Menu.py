@@ -84,7 +84,7 @@ def main():
     dieText = youDied.render(("YOU DIED"), True, (255, 0, 0))
 
     run = True
-    screen = pygame.display.set_mode((cave.width * gVar.scale, cave.height * gVar.scale))
+    screen = pygame.display.set_mode((cave.width * gVar.scale, cave.height * gVar.scale), pygame.FULLSCREEN)
 
     cave.create_world(gVar)
     cave.draw_world(gVar, screen)
@@ -97,31 +97,26 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     run = False
-                if event.key == pygame.K_x:
-                    spider.spitVenom()
                 if event.key == pygame.K_c:
                     spider.createWeb(gVar)
 
         '''Обработка зажатий клавиш'''
         key = pygame.key.get_pressed()
-        if key[pygame.K_UP]:
-            spider.dir = "Top"
-        if key[pygame.K_DOWN]:
-            spider.dir = "Bottom"
-        if key[pygame.K_LEFT]:
-            spider.dir = "Left"
-        if key[pygame.K_RIGHT]:
-            spider.dir = "Right"
-        if key[pygame.K_z]:
-            spider.action = "Attack"
-        if not key[pygame.K_z]:
-            spider.action = None
+        if gVar.spider_alive and gVar.turn % 15 == 0:
+            if key[pygame.K_UP]:
+                spider.move(gVar.world, "Top")
+            if key[pygame.K_DOWN]:
+                spider.move(gVar.world, "Bottom")
+            if key[pygame.K_LEFT]:
+                spider.move(gVar.world, "Left")
+            if key[pygame.K_RIGHT]:
+                spider.move(gVar.world, "Right")
+            if key[pygame.K_z]:
+                spider.attack(gVar.turn)
+            if key[pygame.K_x]:
+                spider.spitVenom()
 
         '''Движения существ'''
-        if gVar.turn % 15 == 0 and gVar.spider_alive:
-            spider.move(gVar.world)
-            if spider.action == "Attack":
-                spider.attack(gVar.turn)
         if gVar.spider_alive and gVar.turn % 5 == 0 and len(spider.range_attacks) != 0:
             for i in range(len(spider.range_attacks)):
                 spider.range_attacks[i].move()
@@ -173,7 +168,7 @@ def main():
 
         '''СМЕРТИ!!!'''
         cave.kill_at_0hp(gVar, interface)
-        if gVar.spider_alive: cave.del_attacks(spider.attacks, gVar.enemy_attacks, spider.range_attacks, gVar.turn)
+        if gVar.spider_alive and gVar.turn %2 == 0: cave.del_attacks(spider.attacks, gVar.enemy_attacks, spider.range_attacks, gVar.turn)
         if spider != None and spider.health <= 0:
             spider.die(gVar)
             spider = None

@@ -28,27 +28,23 @@ class Shiraori:
         self.objrect.x = x * GV.scale
         self.objrect.y = y * GV.scale
 
-    def move(self, world):
+    def move(self, world, dir):
         '''Движение тратит ход'''
-        self.attack_dir = self.dir
+        self.attack_dir = dir
         self.prevX = self.objrect.x
         self.prevY = self.objrect.y
-        if self.dir == "Top":
+        if dir == "Top":
             self.image = pygame.transform.rotate(self.orgn_image, 0)
             self.objrect.y -= GV.scale
-            self.dir = None
-        elif self.dir == "Left":
+        elif dir == "Left":
             self.image = pygame.transform.rotate(self.orgn_image, 90)
             self.objrect.x -= GV.scale
-            self.dir = None
-        elif self.dir == "Bottom":
+        elif dir == "Bottom":
             self.image = pygame.transform.rotate(self.orgn_image, 180)
             self.objrect.y += GV.scale
-            self.dir = None
-        elif self.dir == "Right":
+        elif dir == "Right":
             self.image = pygame.transform.rotate(self.orgn_image, 270)
             self.objrect.x += GV.scale
-            self.dir = None
         self.collide_wall(world)
 
     def createWeb(self, gVar):
