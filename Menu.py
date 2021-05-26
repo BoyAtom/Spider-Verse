@@ -84,9 +84,10 @@ def main():
     dieText = youDied.render(("YOU DIED"), True, (255, 0, 0))
 
     run = True
-    screen = pygame.display.set_mode((cave.width * gVar.scale, cave.height * gVar.scale), pygame.FULLSCREEN)
+    screen = pygame.display.set_mode((cave.width * gVar.scale, cave.height * gVar.scale))
 
     cave.create_world(gVar)
+    cave.draw_world(gVar, screen)
 
     while run:
 
@@ -96,8 +97,6 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     run = False
-                if event.key == pygame.K_z:
-                    spider.action = "Attack"
                 if event.key == pygame.K_x:
                     spider.spitVenom()
                 if event.key == pygame.K_c:
@@ -113,19 +112,23 @@ def main():
             spider.dir = "Left"
         if key[pygame.K_RIGHT]:
             spider.dir = "Right"
+        if key[pygame.K_z]:
+            spider.action = "Attack"
+        if not key[pygame.K_z]:
+            spider.action = None
 
         '''Движения существ'''
         if gVar.turn % 15 == 0 and gVar.spider_alive:
-            spider.move(gVar.walls)
-        if gVar.spider_alive and spider.action == "Attack" and gVar.turn % 2 == 0:
-            spider.attack(gVar.turn)
+            spider.move(gVar.world)
+            if spider.action == "Attack":
+                spider.attack(gVar.turn)
         if gVar.spider_alive and gVar.turn % 5 == 0 and len(spider.range_attacks) != 0:
             for i in range(len(spider.range_attacks)):
                 spider.range_attacks[i].move()
         if gVar.spider_alive and gVar.turn % 30 == 0:
             for i in range(len(gVar.enemys)):
                 gVar.enemys[i].attack(spider, gVar)
-                gVar.enemys[i].move(spider, gVar.walls)
+                gVar.enemys[i].move(spider, gVar.world)
         if gVar.turn % 150 == 0 and gVar.spider_alive and spawned_enemys != enemy_limit:
             spawners[random.randint(0, 3)].spawn_enemy(gVar)
             spawned_enemys += 1
@@ -153,8 +156,10 @@ def main():
         '''Отрисовка атак'''
         if gVar.spider_alive: cave.draw_attacks(spider, screen)
         cave.draw_enemy_attacks(gVar, screen)
-        for i in range(len(gVar.walls)):
-            if gVar.spider_alive: gVar.walls[i].collide_bullet(spider)
+        for y in range(len(gVar.world)):
+            for x in range(len(gVar.world[y])):
+                if gVar.world[y][x].tag == "Wall" and gVar.spider_alive: 
+                    gVar.world[y][x].collide_bullet(spider)
         if gVar.spider_alive:
             spider.collide_attack(gVar.enemy_attacks)
             for i in range(len(gVar.enemys)):

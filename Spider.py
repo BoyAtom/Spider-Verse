@@ -28,7 +28,7 @@ class Shiraori:
         self.objrect.x = x * GV.scale
         self.objrect.y = y * GV.scale
 
-    def move(self, walls):
+    def move(self, world):
         '''Движение тратит ход'''
         self.attack_dir = self.dir
         self.prevX = self.objrect.x
@@ -49,7 +49,7 @@ class Shiraori:
             self.image = pygame.transform.rotate(self.orgn_image, 270)
             self.objrect.x += GV.scale
             self.dir = None
-        self.collide_wall(walls)
+        self.collide_wall(world)
 
     def createWeb(self, gVar):
         '''Создание паутины тратит 2 хода'''
@@ -67,7 +67,6 @@ class Shiraori:
             self.attacks.append(MeleeAttack(self.objrect.x, self.objrect.y + GV.scale, self.damage, "Tiles\AttackSpider.png", cur_turn, "Bottom"))
         elif self.attack_dir == "Right":
             self.attacks.append(MeleeAttack(self.objrect.x + GV.scale, self.objrect.y, self.damage, "Tiles\AttackSpider.png", cur_turn, "Right"))
-        self.action = None
 
     def spitVenom(self):
         '''Плевок тратит ход'''
@@ -82,11 +81,12 @@ class Shiraori:
         self.action = None
         pass
 
-    def collide_wall(self, walls):
-        for i in range (len(walls)):
-            if walls[i].collision(self):
-                self.objrect.x = self.prevX
-                self.objrect.y = self.prevY
+    def collide_wall(self, world):
+        for y in range (len(world)):
+            for x in range (len(world[y])):
+                if world[y][x].tag == "Wall" and world[y][x].collision(self):
+                    self.objrect.x = self.prevX
+                    self.objrect.y = self.prevY
 
     def collide_attack(self, enemy_attacks):
         for j in range (len(enemy_attacks)):
@@ -127,7 +127,6 @@ class Web:
     img = None
 
     def __init__(self, x, y):
-        '''Значение scale должно быть кратно 8!'''
         self.img = pygame.image.load("Tiles\Web.png")
         self.img = pygame.transform.scale(self.img, (GV.scale, GV.scale))
         self.objrect = self.img.get_rect()
@@ -148,7 +147,6 @@ class MeleeAttack:
     del_turn = None
 
     def __init__(self, x, y, damage, image, cur_time, dir):
-        '''Значение scale должно быть кратно 8!'''
         self.img = pygame.image.load(image)
         self.img = pygame.transform.scale(self.img, (GV.scale, GV.scale))
         if dir == "Left":

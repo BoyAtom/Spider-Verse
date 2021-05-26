@@ -13,6 +13,7 @@ class UndergroundFrog:
     in_web = None
     orgn_image = None
     image = None
+    way = []
     dir = "Top"
     prevX = None
     prevY = None
@@ -29,7 +30,7 @@ class UndergroundFrog:
         self.damage = dmg
         self.in_web = False
 
-    def move(self, spider, walls):
+    def move(self, spider, world):
         '''Движение тратит 2 хода'''
         self.collide_web(spider.webs)
         self.collide_attacks(spider)
@@ -55,7 +56,7 @@ class UndergroundFrog:
                 self.dir = "Top"
                 self.objrect.y -= GV.scale
 
-        self.collide_wall(walls)
+        self.collide_wall(spider, world)
 
     def collide_web(self, Webs):
         for i in range(len(Webs)):
@@ -77,11 +78,14 @@ class UndergroundFrog:
                     spider.range_attacks.pop(i)
                     break
 
-    def collide_wall(self, walls):
-        for i in range (len(walls)):
-            if walls[i].collision(self):
-                self.objrect.x = self.prevX
-                self.objrect.y = self.prevY
+    def collide_wall(self, spider, world):
+        for y in range (len(world)):
+            for x in range (len(world[y])):
+                if world[y][x].tag == "Wall" and world[y][x].collision(self):
+                    self.objrect.x = self.prevX
+                    self.objrect.y = self.prevY
+                    self.move(spider, world)
+                    
 
     def attack(self, spider, gVar):
         '''Атака тратит 1 ход'''

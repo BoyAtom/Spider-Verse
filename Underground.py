@@ -9,26 +9,32 @@ class Cave:
     width = 41
 
     def create_world(self, gvar):
-        for x in range(self.width):
-            for y in range(self.height):
-                if x == 0 or y == 0 or x == self.width-1 or y == self.height-1:
-                    if (x == 20) or (y == 11):
-                        gvar.floor.append(Floor(x, y, GV.ground_tiles[random.randint(0, len(GV.ground_tiles) - 1)]))
-                    else: 
-                        gvar.walls.append(Wall(x, y, GV.wall_tiles[random.randint(0, len(GV.wall_tiles) - 1)]))
-                elif x == 1 or y == 1 or x == self.width-2 or y == self.height-2:
-                    gvar.floor.append(Floor(x, y, GV.ground_tiles[random.randint(0, len(GV.ground_tiles) - 1)]))
+        for x in range(self.height):
+            matrix_line = []
+            for y in range(self.width):
+                if x == 0 or y == 0 or y == self.width-1 or x == self.height-1:
+                    if (x == 11) or (y == 20):
+                        matrix_line.append(Floor(y, x, GV.ground_tiles[random.randint(0, len(GV.ground_tiles) - 1)]))
+                        print("f", end=' ')
+                    else:
+                        matrix_line.append(Wall(y, x, GV.wall_tiles[random.randint(0, len(GV.wall_tiles) - 1)]))
+                        print("w", end=' ')
+                elif x == 1 or y == 1 or y == self.width-2 or x == self.height-2:
+                    matrix_line.append(Floor(y, x, GV.ground_tiles[random.randint(0, len(GV.ground_tiles) - 1)]))
+                    print("f", end=' ')
                 elif random.randint(0, 10) <= 1:
-                    gvar.walls.append(Wall(x, y, GV.wall_tiles[random.randint(0, len(GV.wall_tiles) - 1)]))
+                    matrix_line.append(Wall(y, x, GV.wall_tiles[random.randint(0, len(GV.wall_tiles) - 1)]))
+                    print("w", end=' ')
                 else:
-                    gvar.floor.append(Floor(x, y, GV.ground_tiles[random.randint(0, len(GV.ground_tiles) - 1)]))
+                    matrix_line.append(Floor(y, x, GV.ground_tiles[random.randint(0, len(GV.ground_tiles) - 1)]))
+                    print("f", end=' ')
+            gvar.world.append(matrix_line)
+            print()
 
     def draw_world(self, gvar, screen):
-        for i in range(len(gvar.walls)):
-            gvar.walls[i].draw(screen)
-
-        for i in range(len(gvar.floor)):
-            gvar.floor[i].draw(screen)
+        for x in range(self.height):
+            for y in range(self.width):
+                gvar.world[x][y].draw(screen)
 
     def draw_webs(self, gvar, screen):
         for i in range(len(gvar.webs)):
@@ -72,8 +78,10 @@ class Cave:
 
 
 class Wall:
+
+    tag = "Wall"
+
     def __init__(self, x, y, image):
-        '''Значение scale должно быть кратно 8!'''
         self.img = pygame.image.load(image)
         self.img = pygame.transform.scale(self.img, (GV.scale, GV.scale))
         self.objrect = self.img.get_rect()
@@ -94,8 +102,10 @@ class Wall:
         screen.blit(self.img, self.objrect)
 
 class Floor:
+
+    tag = "Floor"
+
     def __init__(self, x, y, image):
-        '''Значение scale должно быть кратно 8!'''
         self.img = pygame.image.load(image)
         self.img = pygame.transform.scale(self.img, (GV.scale, GV.scale))
         self.objrect = self.img.get_rect()

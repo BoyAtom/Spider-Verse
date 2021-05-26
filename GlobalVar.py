@@ -5,6 +5,7 @@ class GlobalVariables:
     scale = 31
     day = 0
     turn = 0
+    world = []
     walls = []
     wall_tiles = [
         "Tiles\Wall.png",
