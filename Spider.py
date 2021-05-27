@@ -28,7 +28,7 @@ class Shiraori:
         self.objrect.x = x * GV.scale
         self.objrect.y = y * GV.scale
 
-    def move(self, world, dir):
+    def move(self, gVar, dir):
         '''Движение тратит ход'''
         self.attack_dir = dir
         self.prevX = self.objrect.x
@@ -45,7 +45,8 @@ class Shiraori:
         elif dir == "Right":
             self.image = pygame.transform.rotate(self.orgn_image, 270)
             self.objrect.x += GV.scale
-        self.collide_wall(world)
+        self.collide_wall(gVar.world)
+        self.collide_enemy(gVar.enemys)
 
     def createWeb(self, gVar):
         '''Создание паутины тратит 2 хода'''
@@ -91,6 +92,12 @@ class Shiraori:
                     self.health -= enemy_attacks[i].damage
                     enemy_attacks.pop(i)
                     break
+
+    def collide_enemy(self, enemys):
+        for i in range(len(enemys)):
+            if self.objrect.x == enemys[i].objrect.x and self.objrect.y == enemys[i].objrect.y:
+                self.objrect.x = self.prevX
+                self.objrect.y = self.prevY
 
     def add_health(self, amount):
         if self.health + amount <= self.max_health:

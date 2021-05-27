@@ -66,7 +66,7 @@ def main():
 
     clock = pygame.time.Clock()
     cave = Cave()
-    spider = Shiraori(21, 12)
+    spider = Shiraori(20, 11)
     gVar = GlobalVariables()
     gVar.font = pygame.font.Font('Font\PixelFont.ttf', 7)
     interface = Interface(gVar.font)
@@ -74,117 +74,128 @@ def main():
     spawned_enemys = 0
     enemy_limit = 4
     spawners = [
-        Spawner(20, 0),
-        Spawner(0, 11),
-        Spawner(41, 11),
-        Spawner(20, 22)
+        Spawner(20, 1),
+        Spawner(1, 11),
+        Spawner(39, 11),
+        Spawner(20, 21)
     ]
 
     youDied = pygame.font.Font('Font\PixelFont.ttf', 50)
     dieText = youDied.render(("YOU DIED"), True, (255, 0, 0))
 
-    run = True
+    game_state = "game"
     screen = pygame.display.set_mode((cave.width * gVar.scale, cave.height * gVar.scale), pygame.FULLSCREEN)
 
     cave.create_world(gVar)
-    cave.draw_world(gVar, screen)
 
-    while run:
-
+    while game_state == "game":
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                run = False
+               game_state = "menu"
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    run = False
+                    game_state = "menu"
+                    gVar.DestroyEverything(interface)
+                    cave.draw_world(gVar, screen)
+                    cave = None
+                    spider = None
+                    spawners.clear()
+                    gVar = None
+                    interface = None
+                    screen.fill((0, 0, 0))
+                    screen = None
+                    pygame.display.flip()
+                    pygame.display.update()
                 if event.key == pygame.K_c:
                     spider.createWeb(gVar)
+                
+        if game_state == "game":
 
-        '''Обработка зажатий клавиш'''
-        key = pygame.key.get_pressed()
-        if gVar.spider_alive and gVar.turn % 15 == 0:
-            if key[pygame.K_UP]:
-                spider.move(gVar.world, "Top")
-            if key[pygame.K_DOWN]:
-                spider.move(gVar.world, "Bottom")
-            if key[pygame.K_LEFT]:
-                spider.move(gVar.world, "Left")
-            if key[pygame.K_RIGHT]:
-                spider.move(gVar.world, "Right")
-            if key[pygame.K_z]:
-                spider.attack(gVar.turn)
-            if key[pygame.K_x]:
-                spider.spitVenom()
+            '''Обработка зажатий клавиш'''
+            key = pygame.key.get_pressed()
+            if gVar.spider_alive and gVar.turn % 10 == 0:
+                if key[pygame.K_UP]:
+                    spider.move(gVar, "Top")
+                if key[pygame.K_DOWN]:
+                    spider.move(gVar, "Bottom")
+                if key[pygame.K_LEFT]:
+                    spider.move(gVar, "Left")
+                if key[pygame.K_RIGHT]:
+                    spider.move(gVar, "Right")
+                if key[pygame.K_z]:
+                    spider.attack(gVar.turn)
+                if key[pygame.K_x]:
+                    spider.spitVenom()
 
-        '''Движения существ'''
-        if gVar.spider_alive and gVar.turn % 5 == 0 and len(spider.range_attacks) != 0:
-            for i in range(len(spider.range_attacks)):
-                spider.range_attacks[i].move()
-        if gVar.spider_alive and gVar.turn % 30 == 0:
+            '''Движения существ'''
+            if gVar.spider_alive and gVar.turn % 5 == 0 and len(spider.range_attacks) != 0:
+                for i in range(len(spider.range_attacks)):
+                    spider.range_attacks[i].move()
+            if gVar.spider_alive and gVar.turn % 20 == 0:
+                for i in range(len(gVar.enemys)):
+                    gVar.enemys[i].attack(spider, gVar)
+                    gVar.enemys[i].move(spider, gVar)
+            if gVar.turn % 100 == 0 and gVar.spider_alive and spawned_enemys != enemy_limit:
+                spawners[random.randint(0, 3)].spawn_enemy(gVar)
+                spawned_enemys += 1
+                gVar.turn = 0
+            if spawned_enemys == enemy_limit and len(gVar.enemys) == 0:
+                spawned_enemys = 0
+                if enemy_limit != 15: enemy_limit += 1
+                interface.change_day(1)
+                if interface.day%5 == 0: gVar.enemy_dmg += 1
+                gVar.enemy_hp += 1
+            if gVar.spider_alive: spider.action = None
+
+            '''Очистка экрана'''
+            screen.fill((0, 0, 0))
+
+            '''Отрисовка карты'''
+            cave.draw_world(gVar, screen)
+            cave.draw_webs(gVar, screen)
+
+            '''Отрисовка существ'''
             for i in range(len(gVar.enemys)):
-                gVar.enemys[i].attack(spider, gVar)
-                gVar.enemys[i].move(spider, gVar.world)
-        if gVar.turn % 150 == 0 and gVar.spider_alive and spawned_enemys != enemy_limit:
-            spawners[random.randint(0, 3)].spawn_enemy(gVar)
-            spawned_enemys += 1
-            gVar.turn = 0
-        if spawned_enemys == enemy_limit and len(gVar.enemys) == 0:
-            spawned_enemys = 0
-            if enemy_limit != 15: enemy_limit += 1
-            interface.change_day(1)
-            if interface.day == 4: gVar.enemy_dmg += 1
-            gVar.enemy_hp += 1
-        if gVar.spider_alive: spider.action = None
+                gVar.enemys[i].draw(gVar, screen)
+            if gVar.spider_alive: spider.draw(gVar, screen)
 
-        '''Очистка экрана'''
-        screen.fill((0, 0, 0))
+            '''Отрисовка атак'''
+            if gVar.spider_alive: cave.draw_attacks(spider, screen)
+            cave.draw_enemy_attacks(gVar, screen)
+            for y in range(len(gVar.world)):
+                for x in range(len(gVar.world[y])):
+                    if gVar.world[y][x].tag == "Wall" and gVar.spider_alive: 
+                        gVar.world[y][x].collide_bullet(spider)
+            if gVar.spider_alive:
+                spider.collide_attack(gVar.enemy_attacks)
+                for i in range(len(gVar.enemys)):
+                    gVar.enemys[i].collide_attacks(spider)
 
-        '''Отрисовка карты'''
-        cave.draw_world(gVar, screen)
-        cave.draw_webs(gVar, screen)
+            '''События'''
+            if gVar.spider_alive and spider.xp_limit <= interface.experience:
+                spider.level_up()
+                interface.change_level(1)
+                interface.experience = 0
 
-        '''Отрисовка существ'''
-        for i in range(len(gVar.enemys)):
-            gVar.enemys[i].draw(gVar, screen)
-        if gVar.spider_alive: spider.draw(gVar, screen)
+            '''СМЕРТИ!!!'''
+            cave.kill_at_0hp(gVar, interface)
+            if gVar.spider_alive and gVar.turn %2 == 0: cave.del_attacks(spider.attacks, gVar.enemy_attacks, spider.range_attacks, gVar.turn)
+            if spider != None and spider.health <= 0:
+                spider.die(gVar)
+                spider = None
 
-        '''Отрисовка атак'''
-        if gVar.spider_alive: cave.draw_attacks(spider, screen)
-        cave.draw_enemy_attacks(gVar, screen)
-        for y in range(len(gVar.world)):
-            for x in range(len(gVar.world[y])):
-                if gVar.world[y][x].tag == "Wall" and gVar.spider_alive: 
-                    gVar.world[y][x].collide_bullet(spider)
-        if gVar.spider_alive:
-            spider.collide_attack(gVar.enemy_attacks)
-            for i in range(len(gVar.enemys)):
-                gVar.enemys[i].collide_attacks(spider)
+            interface.draw_exp(screen)
+            interface.draw_level(screen)
+            interface.draw_day(screen)
+            if gVar.spider_alive == False:
+                screen.blit(dieText, ((cave.width / 3) * gVar.scale, (cave.height / 4) * gVar.scale))
 
-        '''События'''
-        if gVar.spider_alive and spider.xp_limit <= interface.experience:
-            spider.level_up()
-            interface.change_level(1)
-            interface.experience = 0
+            gVar.turn += 1
+            pygame.display.flip()
+            pygame.display.update()
+            clock.tick(gVar.FPS)
 
-        '''СМЕРТИ!!!'''
-        cave.kill_at_0hp(gVar, interface)
-        if gVar.spider_alive and gVar.turn %2 == 0: cave.del_attacks(spider.attacks, gVar.enemy_attacks, spider.range_attacks, gVar.turn)
-        if spider != None and spider.health <= 0:
-            spider.die(gVar)
-            spider = None
-
-        interface.draw_exp(screen)
-        interface.draw_level(screen)
-        interface.draw_day(screen)
-        if gVar.spider_alive == False:
-            screen.blit(dieText, ((cave.width / 3) * gVar.scale, (cave.height / 4) * gVar.scale))
-
-        gVar.turn += 1
-        pygame.display.flip()
-        pygame.display.update()
-        clock.tick(gVar.FPS)
-
-    pygame.quit()
+    menu()
 
 ### ИГРА ЗАКАНЧИВАЕТСЯ ТУТ
 
@@ -194,73 +205,76 @@ redButton = button((255, 0, 0), cave.width * gVar.scale//3,cave.height * gVar.sc
 listButton = button((255, 0, 0), cave.width * gVar.scale//3,cave.height * gVar.scale//1.5, 400, 100, "Читы")
 helpButton = button((0, 0, 0), cave.width * gVar.scale//3,cave.height * gVar.scale//2, 400, 100, "Инструкция и управление")
 
-game_state = "menu"
-run = True
-while run:
-    if game_state == "menu":
-        redrawMenuWindow()
-    elif game_state == "game":
-        main()
-    pygame.display.update()
-
-    for event in pygame.event.get():
-        pos = pygame.mouse.get_pos()
-
-        if event.type == pygame.QUIT:
-            run = False
-            pygame.quit()
-            quit()
-
+def menu():
+    game_state = "menu"
+    run = True
+    while run:
         if game_state == "menu":
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if greenButton.isOver(pos):
-                    print("clicked the button")
-                    game_state = "game"
-                if redButton.isOver(pos):
-                    print("clicked the 2button")
-                    run = False
-                    pygame.quit()
-                    quit()
-                if listButton.isOver(pos):
-                    print("clicked the 3button")
-                    while game_state == 'menu':
-                        win.blit(pygame.image.load('Images\Ham.jpg').convert(), (cave.width * gVar.scale//4,cave.height * gVar.scale//50))
-                        pygame.display.flip()
-                        for event in pygame.event.get():
-                            if event.type == pygame.KEYDOWN:
-                                if event.key == pygame.K_ESCAPE:
-                                    pygame.quit()
-                                    quit()
-                if helpButton.isOver(pos):
-                    print("clicked the 4button")
-                    game_state = 'help'
-                    while game_state == 'help':
-                        win.blit(HelpG,(5, 5))
-                        pygame.display.update()
-                        for event in pygame.event.get():
-                            if event.type == pygame.KEYDOWN:
-                                if event.key == pygame.K_ESCAPE:
-                                    game_state = 'menu'
-                                    pygame.display.update()
+            redrawMenuWindow()
+        elif game_state == "game":
+            main()
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            pos = pygame.mouse.get_pos()
+
+            if event.type == pygame.QUIT:
+                run = False
+                pygame.quit()
+                quit()
+
+            if game_state == "menu":
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if greenButton.isOver(pos):
+                        print("clicked the button")
+                        game_state = "game"
+                    if redButton.isOver(pos):
+                        print("clicked the 2button")
+                        run = False
+                        pygame.quit()
+                        quit()
+                    if listButton.isOver(pos):
+                        print("clicked the 3button")
+                        while game_state == 'menu':
+                            win.blit(pygame.image.load('Images\Ham.jpg').convert(), (cave.width * gVar.scale//4,cave.height * gVar.scale//50))
+                            pygame.display.flip()
+                            for event in pygame.event.get():
+                                if event.type == pygame.KEYDOWN:
+                                    if event.key == pygame.K_ESCAPE:
+                                        pygame.quit()
+                                        quit()
+                    if helpButton.isOver(pos):
+                        print("clicked the 4button")
+                        game_state = 'help'
+                        while game_state == 'help':
+                            win.blit(HelpG,(5, 5))
+                            pygame.display.update()
+                            for event in pygame.event.get():
+                                if event.type == pygame.KEYDOWN:
+                                    if event.key == pygame.K_ESCAPE:
+                                        game_state = 'menu'
+                                        pygame.display.update()
 
 
 
 
 
-            if event.type == pygame.MOUSEMOTION:
-                if greenButton.isOver(pos):
-                    greenButton.color = (0, 0, 0)
-                else:
-                    greenButton.color = (255, 255, 255)
-                if redButton.isOver(pos):
-                    redButton.color = (0, 0, 0)
-                else:
-                    redButton.color = (255, 255, 255)
-                if listButton.isOver(pos):
-                    listButton.color = (0, 0, 0)
-                else:
-                    listButton.color = (255, 255, 255)
-                if helpButton.isOver(pos):
-                    helpButton.color = (0, 0, 0)
-                else:
-                    helpButton.color = (255, 255, 255)
+                if event.type == pygame.MOUSEMOTION:
+                    if greenButton.isOver(pos):
+                        greenButton.color = (0, 0, 0)
+                    else:
+                        greenButton.color = (255, 255, 255)
+                    if redButton.isOver(pos):
+                        redButton.color = (0, 0, 0)
+                    else:
+                        redButton.color = (255, 255, 255)
+                    if listButton.isOver(pos):
+                        listButton.color = (0, 0, 0)
+                    else:
+                        listButton.color = (255, 255, 255)
+                    if helpButton.isOver(pos):
+                        helpButton.color = (0, 0, 0)
+                    else:
+                        helpButton.color = (255, 255, 255)
+
+menu()

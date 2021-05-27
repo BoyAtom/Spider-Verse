@@ -14,12 +14,19 @@ class Cave:
             for y in range(self.width):
                 if x == 0 or y == 0 or y == self.width-1 or x == self.height-1:
                     if (x == 11) or (y == 20):
-                        matrix_line.append(Floor(y, x, GV.ground_tiles[random.randint(0, len(GV.ground_tiles) - 1)]))
+                        matrix_line.append(Wall(y, x, GV.entrance_tiles[random.randint(0, len(GV.entrance_tiles) - 1)]))
                         print("f", end=' ')
                     else:
                         matrix_line.append(Wall(y, x, GV.wall_tiles[random.randint(0, len(GV.wall_tiles) - 1)]))
                         print("w", end=' ')
                 elif x == 1 or y == 1 or y == self.width-2 or x == self.height-2:
+                    if (x == 11) or (y == 20):
+                        matrix_line.append(Floor(y, x, GV.ground_tiles[random.randint(0, len(GV.ground_tiles) - 1)]))
+                        print("f", end=' ')
+                    else:
+                        matrix_line.append(Wall(y, x, GV.wall_tiles[random.randint(0, len(GV.wall_tiles) - 1)]))
+                        print("w", end=' ')
+                elif x == 2 or y == 2 or y == self.width-3 or x == self.height-3:
                     matrix_line.append(Floor(y, x, GV.ground_tiles[random.randint(0, len(GV.ground_tiles) - 1)]))
                     print("f", end=' ')
                 elif random.randint(0, 10) <= 1:
@@ -32,8 +39,8 @@ class Cave:
             print()
 
     def draw_world(self, gvar, screen):
-        for x in range(self.height):
-            for y in range(self.width):
+        for x in range(len(gvar.world)):
+            for y in range(len(gvar.world[x])):
                 gvar.world[x][y].draw(screen)
 
     def draw_webs(self, gvar, screen):

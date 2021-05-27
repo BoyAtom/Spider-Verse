@@ -6,7 +6,6 @@ class GlobalVariables:
     day = 0
     turn = 0
     world = []
-    walls = []
     wall_tiles = [
         "Tiles\Wall.png",
     ]
@@ -16,7 +15,9 @@ class GlobalVariables:
         "Tiles\Ground.png",
         "Tiles\Ground1.png"
     ]
-    floor = []
+    entrance_tiles = [
+        "Tiles\Entrance.png"
+    ]
     webs = []
     enemys = []
     enemy_attacks = []
@@ -25,3 +26,17 @@ class GlobalVariables:
     spider_alive = True
     font = None
     FPS = 60
+
+    def DestroyEverything(self, interface):
+        self.day = 0
+        self.turn = 0
+        self.world.clear()
+        self.webs.clear()
+        self.enemys.clear()
+        self.enemy_attacks.clear()
+        self.enemy_hp = 5
+        self.enemy_dmg = 1
+        self.spider_alive = True
+        interface.day = None
+        interface.experience = None
+        interface.level = None

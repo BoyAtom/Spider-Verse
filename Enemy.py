@@ -30,7 +30,7 @@ class UndergroundFrog:
         self.damage = dmg
         self.in_web = False
 
-    def move(self, spider, world):
+    def move(self, spider, gVar):
         '''Движение тратит 2 хода'''
         self.collide_web(spider.webs)
         self.collide_attacks(spider)
@@ -40,23 +40,28 @@ class UndergroundFrog:
         pif = math.sqrt((spider.objrect.x/GV.scale - self.objrect.x/GV.scale)**2 + (spider.objrect.y/GV.scale - self.objrect.y/GV.scale)**2)
         if pif > 1.5 and self.in_web == False:
             if spider.objrect.x >= self.objrect.x and random.randint(0, 10) > 7:
-                self.image = pygame.transform.rotate(self.orgn_image, 270)
-                self.dir = "Right"
+                self.turn_to_spider("Right")
                 self.objrect.x += GV.scale
             if spider.objrect.y > self.objrect.y and random.randint(0, 10) > 7:
-                self.image = pygame.transform.rotate(self.orgn_image, 180)
-                self.dir = "Bottom"
+                self.turn_to_spider("Bottom")
                 self.objrect.y += GV.scale
             if spider.objrect.x <= self.objrect.x and random.randint(0, 10) > 7:
-                self.image = pygame.transform.rotate(self.orgn_image, 90)
-                self.dir = "Left"
+                self.turn_to_spider("Left")
                 self.objrect.x -= GV.scale
             if spider.objrect.y < self.objrect.y and random.randint(0, 10) > 7:
-                self.image = pygame.transform.rotate(self.orgn_image, 0)
-                self.dir = "Top"
+                self.turn_to_spider("Top")
                 self.objrect.y -= GV.scale
+        elif pif <= 1.5 and self.in_web == False:
+            if spider.objrect.x > self.objrect.x and spider.objrect.y == self.objrect.y:
+                self.turn_to_spider("Right")
+            if spider.objrect.y > self.objrect.y and spider.objrect.x == self.objrect.x:
+                self.turn_to_spider("Bottom")
+            if spider.objrect.x < self.objrect.x and spider.objrect.y == self.objrect.y:
+                self.turn_to_spider("Left")
+            if spider.objrect.y < self.objrect.y and spider.objrect.x == self.objrect.x:
+                self.turn_to_spider("Top")
 
-        self.collide_wall(spider, world)
+        self.collide_wall(spider, gVar.world)
 
     def collide_web(self, Webs):
         for i in range(len(Webs)):
@@ -84,8 +89,17 @@ class UndergroundFrog:
                 if world[y][x].tag == "Wall" and world[y][x].collision(self):
                     self.objrect.x = self.prevX
                     self.objrect.y = self.prevY
-                    self.move(spider, world)
-                    
+            
+    def turn_to_spider(self, dir):
+        if dir == "Top":
+            self.image = pygame.transform.rotate(self.orgn_image, 0)
+        elif dir == "Left":
+            self.image = pygame.transform.rotate(self.orgn_image, 90)
+        elif dir == "Bottom":
+            self.image = pygame.transform.rotate(self.orgn_image, 180)
+        elif dir == "Right":
+            self.image = pygame.transform.rotate(self.orgn_image, 270)
+        self.dir = dir
 
     def attack(self, spider, gVar):
         '''Атака тратит 1 ход'''
