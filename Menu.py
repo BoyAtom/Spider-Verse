@@ -12,10 +12,9 @@ pygame.init()
 
 clock = pygame.time.Clock()
 cave = Cave()
-spider = Shiraori(10, 10)
 gVar = GlobalVariables()
 gVar.font = pygame.font.Font('Font\oneFont.ttf', 7)
-win = pygame.display.set_mode((cave.width * gVar.scale, cave.height * gVar.scale),
+win = pygame.display.set_mode([cave.width * gVar.scale, cave.height * gVar.scale],
                                      pygame.DOUBLEBUF | pygame.FULLSCREEN)
 background_image = pygame.image.load('Images\BackGr.jpg')
 HelpG = pygame.image.load('Images\help.jpg')
@@ -62,29 +61,30 @@ def redrawMenuWindow():
 
 def main():
     pygame.init()
+    screen = pygame.display.set_mode([41 * 31, 23 * 31], 
+                                            pygame.DOUBLEBUF | pygame.FULLSCREEN | pygame.HWSURFACE)
     pygame.display.set_caption("Spider-Verse")
 
-    clock = pygame.time.Clock()
-    cave = Cave()
-    spider = Shiraori(20, 11)
     gVar = GlobalVariables()
     gVar.font = pygame.font.Font('Font\PixelFont.ttf', 7)
+    clock = pygame.time.Clock()
+    cave = Cave()
+    spider = Shiraori(cave.width // 2, cave.height // 2)
     interface = Interface(gVar.font)
 
     spawned_enemys = 0
     enemy_limit = 4
     spawners = [
-        Spawner(20, 1),
-        Spawner(1, 11),
-        Spawner(39, 11),
-        Spawner(20, 21)
+        Spawner(1, cave.height // 2),
+        Spawner(cave.width // 2, cave.height - 2),
+        Spawner(cave.width - 2, cave.height // 2),
+        Spawner(cave.width // 2, 1)
     ]
 
     youDied = pygame.font.Font('Font\PixelFont.ttf', 50)
     dieText = youDied.render(("YOU DIED"), True, (255, 0, 0))
 
     game_state = "game"
-    screen = pygame.display.set_mode((cave.width * gVar.scale, cave.height * gVar.scale), pygame.FULLSCREEN)
 
     cave.create_world(gVar)
 
@@ -96,7 +96,6 @@ def main():
                 if event.key == pygame.K_ESCAPE:
                     game_state = "menu"
                     gVar.DestroyEverything(interface)
-                    cave.draw_world(gVar, screen)
                     cave = None
                     spider = None
                     spawners.clear()
@@ -113,7 +112,7 @@ def main():
 
             '''Обработка зажатий клавиш'''
             key = pygame.key.get_pressed()
-            if gVar.spider_alive and gVar.turn % 10 == 0:
+            if gVar.spider_alive and gVar.turn % 25 == 0:
                 if key[pygame.K_UP]:
                     spider.move(gVar, "Top")
                 if key[pygame.K_DOWN]:
@@ -128,20 +127,20 @@ def main():
                     spider.spitVenom()
 
             '''Движения существ'''
-            if gVar.spider_alive and gVar.turn % 5 == 0 and len(spider.range_attacks) != 0:
+            if gVar.spider_alive and gVar.turn % 8 == 0 and len(spider.range_attacks) != 0:
                 for i in range(len(spider.range_attacks)):
                     spider.range_attacks[i].move()
-            if gVar.spider_alive and gVar.turn % 20 == 0:
+            if gVar.spider_alive and gVar.turn % 50 == 0:
                 for i in range(len(gVar.enemys)):
                     gVar.enemys[i].attack(spider, gVar)
                     gVar.enemys[i].move(spider, gVar)
-            if gVar.turn % 100 == 0 and gVar.spider_alive and spawned_enemys != enemy_limit:
+            if gVar.turn % 480 == 0 and gVar.spider_alive and spawned_enemys != enemy_limit:
                 spawners[random.randint(0, 3)].spawn_enemy(gVar)
                 spawned_enemys += 1
                 gVar.turn = 0
             if spawned_enemys == enemy_limit and len(gVar.enemys) == 0:
                 spawned_enemys = 0
-                if enemy_limit != 15: enemy_limit += 1
+                if enemy_limit != 50: enemy_limit += 1
                 interface.change_day(1)
                 if interface.day%5 == 0: gVar.enemy_dmg += 1
                 gVar.enemy_hp += 1
@@ -162,10 +161,9 @@ def main():
             '''Отрисовка атак'''
             if gVar.spider_alive: cave.draw_attacks(spider, screen)
             cave.draw_enemy_attacks(gVar, screen)
-            for y in range(len(gVar.world)):
-                for x in range(len(gVar.world[y])):
-                    if gVar.world[y][x].tag == "Wall" and gVar.spider_alive: 
-                        gVar.world[y][x].collide_bullet(spider)
+            for x in range(len(gVar.walls[0])):
+                if gVar.spider_alive: 
+                    gVar.walls[0][x].collide_bullet(spider)
             if gVar.spider_alive:
                 spider.collide_attack(gVar.enemy_attacks)
                 for i in range(len(gVar.enemys)):
@@ -193,6 +191,7 @@ def main():
             gVar.turn += 1
             pygame.display.flip()
             pygame.display.update()
+            print(clock.get_fps())
             clock.tick(gVar.FPS)
 
     menu()
@@ -254,10 +253,6 @@ def menu():
                                     if event.key == pygame.K_ESCAPE:
                                         game_state = 'menu'
                                         pygame.display.update()
-
-
-
-
 
                 if event.type == pygame.MOUSEMOTION:
                     if greenButton.isOver(pos):

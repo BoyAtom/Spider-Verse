@@ -8,7 +8,7 @@ class UndergroundFrog:
     
     health = 5
     max_health = 5
-    damage = 1
+    damage = 3
     xp_treasure = 5
     in_web = None
     orgn_image = None
@@ -61,7 +61,7 @@ class UndergroundFrog:
             if spider.objrect.y < self.objrect.y and spider.objrect.x == self.objrect.x:
                 self.turn_to_spider("Top")
 
-        self.collide_wall(spider, gVar.world)
+        self.collide_wall(spider, gVar.walls)
 
     def collide_web(self, Webs):
         for i in range(len(Webs)):
@@ -83,12 +83,11 @@ class UndergroundFrog:
                     spider.range_attacks.pop(i)
                     break
 
-    def collide_wall(self, spider, world):
-        for y in range (len(world)):
-            for x in range (len(world[y])):
-                if world[y][x].tag == "Wall" and world[y][x].collision(self):
-                    self.objrect.x = self.prevX
-                    self.objrect.y = self.prevY
+    def collide_wall(self, spider, walls):
+        for x in range (len(walls[0])):
+            if walls[0][x].collision(self):
+                self.objrect.x = self.prevX
+                self.objrect.y = self.prevY
             
     def turn_to_spider(self, dir):
         if dir == "Top":

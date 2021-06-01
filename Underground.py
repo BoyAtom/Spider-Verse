@@ -1,47 +1,51 @@
 import pygame
 import random
+import numpy as np
 from Enemy import UndergroundFrog as UF
 from GlobalVar import GlobalVariables as GV
 
 class Cave:
 
-    height = 23
-    width = 41
+    height = 23 #23
+    width = 41 #41
 
     def create_world(self, gvar):
+        wls = []
+        flr = []
         for x in range(self.height):
-            matrix_line = []
             for y in range(self.width):
                 if x == 0 or y == 0 or y == self.width-1 or x == self.height-1:
-                    if (x == 11) or (y == 20):
-                        matrix_line.append(Wall(y, x, GV.entrance_tiles[random.randint(0, len(GV.entrance_tiles) - 1)]))
+                    if (x == self.height // 2) or (y == self.width // 2):
+                        wls.append(Wall(y, x, GV.entrance_tiles[random.randint(0, len(GV.entrance_tiles) - 1)]))
                         print("f", end=' ')
                     else:
-                        matrix_line.append(Wall(y, x, GV.wall_tiles[random.randint(0, len(GV.wall_tiles) - 1)]))
+                        wls.append(Wall(y, x, GV.wall_tiles[random.randint(0, len(GV.wall_tiles) - 1)]))
                         print("w", end=' ')
                 elif x == 1 or y == 1 or y == self.width-2 or x == self.height-2:
-                    if (x == 11) or (y == 20):
-                        matrix_line.append(Floor(y, x, GV.ground_tiles[random.randint(0, len(GV.ground_tiles) - 1)]))
+                    if (x == self.height // 2) or (y == self.width // 2):
+                        flr.append(Floor(y, x, GV.ground_tiles[random.randint(0, len(GV.ground_tiles) - 1)]))
                         print("f", end=' ')
                     else:
-                        matrix_line.append(Wall(y, x, GV.wall_tiles[random.randint(0, len(GV.wall_tiles) - 1)]))
+                        wls.append(Wall(y, x, GV.wall_tiles[random.randint(0, len(GV.wall_tiles) - 1)]))
                         print("w", end=' ')
                 elif x == 2 or y == 2 or y == self.width-3 or x == self.height-3:
-                    matrix_line.append(Floor(y, x, GV.ground_tiles[random.randint(0, len(GV.ground_tiles) - 1)]))
+                    flr.append(Floor(y, x, GV.ground_tiles[random.randint(0, len(GV.ground_tiles) - 1)]))
                     print("f", end=' ')
                 elif random.randint(0, 10) <= 1:
-                    matrix_line.append(Wall(y, x, GV.wall_tiles[random.randint(0, len(GV.wall_tiles) - 1)]))
+                    wls.append(Wall(y, x, GV.wall_tiles[random.randint(0, len(GV.wall_tiles) - 1)]))
                     print("w", end=' ')
                 else:
-                    matrix_line.append(Floor(y, x, GV.ground_tiles[random.randint(0, len(GV.ground_tiles) - 1)]))
+                    flr.append(Floor(y, x, GV.ground_tiles[random.randint(0, len(GV.ground_tiles) - 1)]))
                     print("f", end=' ')
-            gvar.world.append(matrix_line)
             print()
+        gvar.walls.append(np.array(wls))
+        gvar.floor.append(np.array(flr))
 
     def draw_world(self, gvar, screen):
-        for x in range(len(gvar.world)):
-            for y in range(len(gvar.world[x])):
-                gvar.world[x][y].draw(screen)
+        for x in range(len(gvar.walls[0])):
+            gvar.walls[0][x].draw(screen)
+        for x in range(len(gvar.floor[0])):
+            gvar.floor[0][x].draw(screen)
 
     def draw_webs(self, gvar, screen):
         for i in range(len(gvar.webs)):
@@ -89,7 +93,7 @@ class Wall:
     tag = "Wall"
 
     def __init__(self, x, y, image):
-        self.img = pygame.image.load(image)
+        self.img = pygame.image.load(image).convert()
         self.img = pygame.transform.scale(self.img, (GV.scale, GV.scale))
         self.objrect = self.img.get_rect()
         self.objrect.x = x * GV.scale
@@ -113,7 +117,7 @@ class Floor:
     tag = "Floor"
 
     def __init__(self, x, y, image):
-        self.img = pygame.image.load(image)
+        self.img = pygame.image.load(image).convert()
         self.img = pygame.transform.scale(self.img, (GV.scale, GV.scale))
         self.objrect = self.img.get_rect()
         self.objrect.x = x * GV.scale

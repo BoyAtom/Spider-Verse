@@ -45,7 +45,7 @@ class Shiraori:
         elif dir == "Right":
             self.image = pygame.transform.rotate(self.orgn_image, 270)
             self.objrect.x += GV.scale
-        self.collide_wall(gVar.world)
+        self.collide_wall(gVar.walls)
         self.collide_enemy(gVar.enemys)
 
     def createWeb(self, gVar):
@@ -78,10 +78,9 @@ class Shiraori:
         self.action = None
         pass
 
-    def collide_wall(self, world):
-        for y in range (len(world)):
-            for x in range (len(world[y])):
-                if world[y][x].tag == "Wall" and world[y][x].collision(self):
+    def collide_wall(self, walls):
+            for x in range (len(walls[0])):
+                if walls[0][x].collision(self):
                     self.objrect.x = self.prevX
                     self.objrect.y = self.prevY
 
